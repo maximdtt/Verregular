@@ -25,7 +25,7 @@ final class TrainViewController: UIViewController {
         label.font = .boldSystemFont(ofSize: 28)
         label.textColor = .black
         label.textAlignment = .center
-        label.text = "HAHAHAH".uppercased()
+        label.text = "Foo".uppercased()
         
         return label
     }()
@@ -154,6 +154,14 @@ final class TrainViewController: UIViewController {
  // MARK: - UITextFieldDelegate
 
 extension TrainViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if pastSimpleTextField.isFirstResponder {
+            participleTextField.becomeFirstResponder()
+        } else {
+            scrollView.endEditing(true)
+        }
+        return true
+    }
     
 }
 
