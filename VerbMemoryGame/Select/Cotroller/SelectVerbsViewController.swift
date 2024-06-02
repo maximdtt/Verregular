@@ -10,7 +10,7 @@ import UIKit
 final class SelectVerbsViewController: UITableViewController {
     // MARK: - Properties
     
-    private var dataSource = IrregularVerbs()
+    private var dataSource = IrregularVerbs.shared
     
     
     // MARK: - Life Cycle
@@ -24,7 +24,6 @@ final class SelectVerbsViewController: UITableViewController {
         
         tableView.register(SelectVerbTableViewCell.self, forCellReuseIdentifier: "SelectVerbsViewController")
         
-        dataSource.configureVerbs()
     }
     
     // MARK: - Private methods
@@ -48,7 +47,7 @@ extension SelectVerbsViewController {
             return UITableViewCell() }
         
         let verb = dataSource.verbs[indexPath.row]
-        cell.configure(with: verb, isSelected: isSelected(verb: verb))
+        cell.configure(with: verb, isSelected: true)
         
         return cell
     }

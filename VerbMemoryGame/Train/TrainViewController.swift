@@ -76,12 +76,29 @@ final class TrainViewController: UIViewController {
         button.setTitle("Check".localized, for: .normal)
         button.setTitleColor(UIColor.black, for: .normal)
         
+        button.addTarget(self, action: #selector(checkAction), for: .touchUpInside)
+        
         return button
     }()
     
     // MARK: - Properties
     
     private let edgeInsets = 30
+    private var dataSource = IrregularVerbs.shared.selectedVerbs
+    private var currentVerb: Verb? {
+        guard dataSource.count > count else { return nil }
+        return dataSource[count]
+    }
+    
+    private var count = 0 {
+        didSet {
+            infinitiveLabel.text = currentVerb?.infinitive
+            pastSimpleTextField.text = ""
+            participleTextField.text = ""
+            checkButton.backgroundColor = .systemGray5
+            checkButton.setTitle("Check".localized, for: .normal)
+        }
+    }
     
     
     // MARK: - Life Cycle
@@ -95,9 +112,33 @@ final class TrainViewController: UIViewController {
         unregisterForKeyboardNotification()
         hideKeyboardWhenTappedAround()
         
+        infinitiveLabel.text = dataSource.first?.infinitive
+        
     }
     
     // MARK: - Private methods
+    
+    @objc
+    private func checkAction() {
+        if checkAnswers() {
+            
+            if currentVerb?.infinitive == dataSource.last?.infinitive {
+                navigationController?.popViewController(animated: true)
+            } else {
+                count += 1
+            }
+            
+            
+        } else {
+            checkButton.backgroundColor = .red
+            checkButton.setTitle("Try again".localized, for: .normal)
+        }
+    }
+    
+    private func checkAnswers() -> Bool {
+        
+        pastSimpleTextField.text?.lowercased() == currentVerb?.pastSimple.lowercased() && participleTextField.text?.lowercased() == currentVerb?.participle.lowercased()
+    }
     
     private func setUpUI() {
         view.backgroundColor = .white
