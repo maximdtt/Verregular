@@ -19,6 +19,16 @@ final class TrainViewController: UIViewController {
     
     private lazy var contentView: UIView = UIView()
     
+    private lazy var counterLabel: UILabel = {
+        let label = UILabel()
+        
+        label.textColor = .black
+        label.font = .boldSystemFont(ofSize: 24)
+        label.text = "Score: \(counter)"
+        
+        return label
+    }()
+    
     private lazy var infinitiveLabel: UILabel = {
         let label = UILabel()
         
@@ -83,6 +93,7 @@ final class TrainViewController: UIViewController {
     
     // MARK: - Properties
     
+    private var counter = 0
     private let edgeInsets = 30
     private var dataSource = IrregularVerbs.shared.selectedVerbs
     private var currentVerb: Verb? {
@@ -121,23 +132,28 @@ final class TrainViewController: UIViewController {
     @objc
     private func checkAction() {
         if checkAnswers() {
-            
-            if currentVerb?.infinitive == dataSource.last?.infinitive {
-                navigationController?.popViewController(animated: true)
-            } else {
-                count += 1
-            }
-            
+            counter += 1
+            counterLabel.text = "Score: \(counter)"
+            count += 1
             
         } else {
             checkButton.backgroundColor = .red
             checkButton.setTitle("Try again".localized, for: .normal)
         }
     }
+    //currentVerb?.infinitive == dataSource.last?.infinitive
     
     private func checkAnswers() -> Bool {
         
         pastSimpleTextField.text?.lowercased() == currentVerb?.pastSimple.lowercased() && participleTextField.text?.lowercased() == currentVerb?.participle.lowercased()
+    }
+    
+    private func finalAlert() {
+        
+        let alert = UIAlertController(title: "Game over", message: "Your score is \(counter)", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Thanks", style: .default)
+        alert.addAction(action)
+        present(alert, animated: true)
     }
     
     private func setUpUI() {
@@ -146,7 +162,7 @@ final class TrainViewController: UIViewController {
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews([infinitiveLabel, pastSimpleLabel, pastSimpleTextField, participleLabel, participleTextField, checkButton])
+        contentView.addSubviews([infinitiveLabel, pastSimpleLabel, pastSimpleTextField, participleLabel, participleTextField, checkButton, counterLabel])
         
         setUpConstraints()
     }
@@ -163,6 +179,11 @@ final class TrainViewController: UIViewController {
         infinitiveLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(200)
             make.trailing.leading.equalToSuperview().inset(edgeInsets)
+        }
+        
+        counterLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(infinitiveLabel.snp.top).offset(-45)
+            make.trailing.equalToSuperview().inset(45)
         }
         
         pastSimpleLabel.snp.makeConstraints { make in

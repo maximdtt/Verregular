@@ -47,7 +47,7 @@ extension SelectVerbsViewController {
             return UITableViewCell() }
         
         let verb = dataSource.verbs[indexPath.row]
-        cell.configure(with: verb, isSelected: true)
+        cell.configure(with: verb, isSelected: isSelected(verb: verb))
         
         return cell
     }
