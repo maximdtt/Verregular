@@ -139,6 +139,7 @@ final class TrainViewController: UIViewController {
         } else {
             checkButton.backgroundColor = .red
             checkButton.setTitle("Try again".localized, for: .normal)
+            
         }
     }
     //currentVerb?.infinitive == dataSource.last?.infinitive
