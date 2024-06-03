@@ -119,12 +119,22 @@ final class TrainViewController: UIViewController {
         
         title = "Train verbs".localized
         setUpUI()
-        registerForKeyboardNotification()
-        unregisterForKeyboardNotification()
         hideKeyboardWhenTappedAround()
         
         infinitiveLabel.text = dataSource.first?.infinitive
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        registerForKeyboardNotification()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        unregisterForKeyboardNotification()
     }
     
     // MARK: - Private methods
@@ -236,12 +246,15 @@ private extension TrainViewController {
                                                selector: #selector(keyboardWillShow(_:)),
                                                name: UIResponder.keyboardWillShowNotification,
                                                object: nil)
+        NotificationCenter.default.addObserver(self,
+                                                       selector: #selector(keyboardWillHide),
+                                                       name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func unregisterForKeyboardNotification() {
-        NotificationCenter.default.addObserver(self, 
-                                               selector: #selector(keyboardWillHide),
-                                               name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+
     }
     
     @objc
