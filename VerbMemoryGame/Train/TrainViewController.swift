@@ -29,6 +29,14 @@ final class TrainViewController: UIViewController {
         return label
     }()
     
+    private lazy var numberOfVerbLabel: UILabel = {
+        let label = UILabel()
+        
+        label.text = "\(count) / \(dataSource.count)"
+        
+        return label
+    }()
+    
     private lazy var infinitiveLabel: UILabel = {
         let label = UILabel()
         
@@ -93,7 +101,11 @@ final class TrainViewController: UIViewController {
     
     // MARK: - Properties
     
-    private var counter = 0
+    private var counter = 0 {
+        didSet {
+            counterLabel.text = "Score: \(counter)"
+        }
+    }
     private let edgeInsets = 30
     private var dataSource = IrregularVerbs.shared.selectedVerbs
     private var currentVerb: Verb? {
@@ -108,6 +120,7 @@ final class TrainViewController: UIViewController {
             participleTextField.text = ""
             checkButton.backgroundColor = .systemGray5
             checkButton.setTitle("Check".localized, for: .normal)
+            numberOfVerbLabel.text = "\(count) / \(dataSource.count)"
         }
     }
     
@@ -142,16 +155,23 @@ final class TrainViewController: UIViewController {
     @objc
     private func checkAction() {
         if checkAnswers() {
+
             counter += 1
-            counterLabel.text = "Score: \(counter)"
+            if currentVerb?.infinitive == dataSource.last?.infinitive && checkAnswers() {
+                navigationController?.popViewController(animated: true)
+                finalAlert()
+            }
+            
             count += 1
             
         } else {
+            
             checkButton.backgroundColor = .red
             checkButton.setTitle("Try again".localized, for: .normal)
+            
         }
+        
     }
-    //currentVerb?.infinitive == dataSource.last?.infinitive
     
     private func checkAnswers() -> Bool {
         
@@ -172,7 +192,7 @@ final class TrainViewController: UIViewController {
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews([infinitiveLabel, pastSimpleLabel, pastSimpleTextField, participleLabel, participleTextField, checkButton, counterLabel])
+        contentView.addSubviews([infinitiveLabel, pastSimpleLabel, pastSimpleTextField, participleLabel, participleTextField, checkButton, counterLabel, numberOfVerbLabel])
         
         setUpConstraints()
     }
@@ -193,6 +213,11 @@ final class TrainViewController: UIViewController {
         
         counterLabel.snp.makeConstraints { make in
             make.bottom.equalTo(infinitiveLabel.snp.top).offset(-45)
+            make.trailing.equalToSuperview().inset(45)
+        }
+        
+        numberOfVerbLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(counterLabel.snp.top).offset(-10)
             make.trailing.equalToSuperview().inset(45)
         }
         

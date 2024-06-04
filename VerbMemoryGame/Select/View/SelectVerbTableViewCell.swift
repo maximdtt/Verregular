@@ -9,78 +9,47 @@ import UIKit
 import SnapKit
 
 final class SelectVerbTableViewCell: UITableViewCell {
-    
+
+	static let reuseID = "SelectVerbTableViewCell"
+
     enum State {
         case select, unselect
-        
+
         var image: UIImage {
             switch self {
             case .select:
                 return UIImage.checkmark
+
             case .unselect:
                 return UIImage(systemName: "circlebadge") ?? UIImage.add
             }
         }
     }
-    
-    // MARK: - GUI Variables
+
+    // MARK: - UI Variables
     private lazy var checkboxImageView: UIImageView = {
         let view = UIImageView()
-        
         view.image = State.unselect.image
         view.contentMode = .center
-        
         return view
     }()
     
     private lazy var stackView: UIStackView = {
         let view = UIStackView()
-        
         view.axis = .horizontal
         view.distribution = .fillEqually
         view.alignment = .center
         view.spacing = 5
-        
         return view
     }()
     
     private lazy var infinitiveView: UIView = UIView()
-    
-    private lazy var infinitiveLabel: UILabel = {
-        let label = UILabel()
-        
-        label.font = .boldSystemFont(ofSize: 16)
-        
-        return label
-    }()
-    
-    private lazy var translationLabel: UILabel = {
-        let label = UILabel()
-        
-        label.font = .systemFont(ofSize: 12)
-        label.textColor = .gray
-        
-        return label
-    }()
-    
-    private lazy var pastLabel: UILabel = {
-        let label = UILabel()
-        
-        label.font = .systemFont(ofSize: 16)
-        label.textAlignment = .center
-        
-        return label
-    }()
-    
-    private lazy var participleLabel: UILabel = {
-        let label = UILabel()
-        
-        label.font = .systemFont(ofSize: 16)
-        label.textAlignment = .center
-        
-        return label
-    }()
-    
+	// example (можем создать функцию которая будет возвращать сконфигурированный лейбл, уменьшим дублирование кода)
+	private lazy var infinitiveLabel = createLabel(isBold: true, size: 16)
+	private lazy var translationLabel = createLabel(isBold: false, size: 12, color: .gray)
+	private lazy var pastLabel = createLabel(isBold: false, size: 16, aligment: .center)
+	private lazy var participleLabel = createLabel(isBold: false, size: 16, aligment: .center)
+	
     // MARK: - Initialization
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -106,18 +75,16 @@ final class SelectVerbTableViewCell: UITableViewCell {
     
     // MARK: - Private methods
     
-    func setupUI() {
+	private func setupUI() {
         
         infinitiveView.addSubviews([infinitiveLabel, translationLabel])
         stackView.addArrangedSubviews([infinitiveView, pastLabel, participleLabel])
         addSubviews([checkboxImageView, stackView])
-        
+		selectionStyle = .none
         setupConstraints()
     }
     
-    func setupConstraints() {
-        
-        selectionStyle = .none
+    private func setupConstraints() {
         
         checkboxImageView.snp.makeConstraints { make in
             make.width.height.equalTo(20)
@@ -138,10 +105,26 @@ final class SelectVerbTableViewCell: UITableViewCell {
             make.height.equalTo(69)
         }
         
-        stackView.snp.makeConstraints { make in
-            make.leading.equalTo(checkboxImageView.snp.trailing).offset(5)
-            make.top.right.bottom.equalToSuperview()
+		// example you can use "$0"
+        stackView.snp.makeConstraints {
+            $0.leading.equalTo(checkboxImageView.snp.trailing).offset(5)
+			$0.top.right.bottom.equalToSuperview()
         }
-        
     }
+	
+	// just for example
+	private func createLabel(isBold: Bool,
+							 size: CGFloat,
+							 aligment: NSTextAlignment? = nil,
+							 color: UIColor? = nil) -> UILabel {
+		let label = UILabel()
+		label.font = isBold ? .boldSystemFont(ofSize: size) : .systemFont(ofSize: size)
+		if let aligment {
+			label.textAlignment = aligment
+		}
+		if let color {
+			label.textColor = color
+		}
+		return label
+	}
 }
